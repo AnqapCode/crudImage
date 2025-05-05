@@ -98,4 +98,12 @@ class Welcome extends CI_Controller
             }
         }
     }
+
+    public function delete($id= FALSE){
+		$post = $this -> model -> read($id);
+
+		$this -> model -> delete($id);
+		unlink('./upload/post/' . $post -> filename);
+		redirect('welcome');
+	}
 }

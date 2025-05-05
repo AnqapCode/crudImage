@@ -40,5 +40,9 @@ class M_welcome extends CI_Model
         $this->db->where('id', $id);
         $this->db->update('post', $data);
     }
-
+    
+    public function delete($id){
+        $this -> db -> where('id', $id);
+        $this -> db -> delete('post');
+    }
 }
