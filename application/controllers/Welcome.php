@@ -61,43 +61,48 @@ class Welcome extends CI_Controller
     }
 
     public function update($id)
-    {
-        $this->load->helper('form');
-        $this->load->library('form_validation');
+{
+    $this->load->helper('form');
+    $this->load->library('form_validation');
 
-        $this->form_validation->set_rules('name', 'Name', 'required|max_length[30]');
+    $this->form_validation->set_rules('name', 'Name', 'required|max_length[30]');
 
-        if ($this->form_validation->run() == false) {
-            $data['post'] = $this->model->read($id);
-            $this->load->view('header');
-            $this->load->view('update', $data);
-            $this->load->view('footer');
-        } else {
-            if ($this->input->post('file')) {
-                $post = $this->model->read($id);
+    if ($this->form_validation->run() == false) {
+        $data['post'] = $this->model->read($id);
+        $this->load->view('header');
+        $this->load->view('update', $data);
+        $this->load->view('footer');
+    } else {
+        $post = $this->model->read($id);
+        $filename = $post->filename; // default: old filename
 
-                $config['upload_path']      = './upload/post';
-                $config['allowed_types']    = 'jpg|jpeg|png';
-                $config['max_size']         = '100000';
-                $config['file_ext_tolower'] = true;
-                $config['file_name']        = str_replace('.', '_', $id);
+        // Check if a new image is uploaded
+        if (!empty($_FILES['image']['name'])) {
+            $config['upload_path']      = './upload/post';
+            $config['allowed_types']    = 'jpg|jpeg|png';
+            $config['max_size']         = '100000';
+            $config['file_ext_tolower'] = true;
+            $config['file_name']        = str_replace('.', '_', $id); // optional: custom name
 
-                $this->load->library('upload', $config);
+            $this->load->library('upload', $config);
 
-                if (! $this->upload->do_upload('image')) {
-                    $this->session->set_flashdata('error', $this->upload->display_errors());
-                    redirect('welcome/index');
-                } else {
-                    $filename = $this->upload->data('file_name');
-                    $this->model->update($id, $filename);
-                    redirect('');
-                }
+            if (!$this->upload->do_upload('image')) {
+                $this->session->set_flashdata('error', $this->upload->display_errors());
+                redirect('welcome/update/' . $id);
+                return;
             } else {
-                $this->model->update($id);
-                redirect('');
+                $filename = $this->upload->data('file_name');
             }
         }
+
+        // Only update name and filename
+        $name = $this->input->post('name', true);
+        $this->model->update($id, $name, $filename);  // No description anymore
+        redirect('');
     }
+}
+
+
 
     public function delete($id= FALSE){
 		$post = $this -> model -> read($id);

@@ -24,22 +24,21 @@ class M_welcome extends CI_Model
         }
     }
 
-    public function update($id, $filename = "")
-    {
-        if ($filename != "") {
-            $data = [
-                'name'     => $this->input->post('name', true),
-                'filename' => $filename,
-            ];
-        } else {
-            $data = [
-                'name' => $this->input->post('name', true),
-            ];
-        }
+    public function update($id, $name, $filename = "")
+{
+    $data = [
+        'name' => $name,
+    ];
 
-        $this->db->where('id', $id);
-        $this->db->update('post', $data);
+    if ($filename !== "") {
+        $data['filename'] = $filename;
     }
+
+    $this->db->where('id', $id);
+    $this->db->update('post', $data);
+}
+
+
     
     public function delete($id){
         $this -> db -> where('id', $id);

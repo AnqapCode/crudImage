@@ -1,40 +1,47 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 
-<h6><?php echo validation_errors(); ?></h6>
-<h6><?php echo $this->session->flashdata('error'); ?></h6>
+<div class="container my-5">
+    <?php if (validation_errors()): ?>
+        <div class="alert alert-warning">
+            <?php echo validation_errors(); ?>
+        </div>
+    <?php endif; ?>
 
-<div class="row">
-  <form action="<?php echo site_url('welcome/update/' . $post->id); ?>" method="post" enctype="multipart/form-data">
-    <div class="row">
-      <div class="input-field col s12">
-          <input name="name" id="name" type="text" class="validate" value="<?php echo $post->name; ?>">
-          <label for="name">Item Name</label>
-      </div>
-      <div class="center col s12">
-         <img class="responsive-img" id="image" style="max-height:30vh;" src="<?php echo site_url('upload/post/' . $post->filename); ?>">
-      </div>
-      <div class="file-field input-field col s12">
-        <div class="btn teal accent-4">
-          <span>Image</span>
-          <input name="image" type="file" id="file">
+    <?php if ($this->session->flashdata('error')): ?>
+        <div class="alert alert-danger">
+            <?php echo $this->session->flashdata('error'); ?>
         </div>
-        <div class="file-path-wrapper">
-          <input class="file-path validate" type="text" onchange="thumbnail();" name="file">
+    <?php endif; ?>
+
+    <form action="<?php echo site_url('welcome/update/' . $post->id); ?>" method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="name" class="form-label">Item Name</label>
+            <input name="name" id="name" type="text" class="form-control" value="<?php echo $post->name; ?>">
         </div>
-      </div>
-    </div>
-    <div class="col s12 center">
-      <button class="btn teal accent-4" type="submit">Submit</button>
-    </div>
-  </form>
+
+        <div class="text-center mb-4">
+            <img id="image" src="<?php echo site_url('upload/post/' . $post->filename); ?>" 
+                 alt="Current Image" 
+                 class="img-thumbnail rounded" 
+                 style="max-width: 300px; height: auto;">
+        </div>
+
+        <div class="mb-3">
+            <label for="file" class="form-label">Upload New Image</label>
+            <input class="form-control" type="file" name="image" id="file" onchange="thumbnail();">
+        </div>
+
+        <div class="text-center">
+            <button class="btn btn-success" type="submit">Submit</button>
+        </div>
+    </form>
 </div>
 
 <script type="text/javascript">
-
-  function thumbnail () {
+  function thumbnail() {
     var preview = document.querySelector('#image');
-    var file    = document.querySelector('input[type=file]').files[0];
-    var reader  = new FileReader();
+    var file = document.querySelector('input[type=file]').files[0];
+    var reader = new FileReader();
 
     reader.onloadend = function () {
       preview.src = reader.result;
